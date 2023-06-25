@@ -1,0 +1,63 @@
+{
+	"name": "webpack_template_repository",
+	"version": "1.0.0",
+	"description": "Creating a template repository - You can make an existing repository a template, so you and others can generate new repositories with the same directory structure, branches, and files.",
+	"main": ".src/index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "webpack",
+		"watch": "webpack --watch",
+		"start": "webpack serve --open",
+		"startDock": "webpack serve --progress --port 8080",
+		"deploy": "gh-pages -d dist"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/JustWaveThings/webpack_template_repository.git"
+	},
+	"keywords": [],
+	"author": "JustWaveThings",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/JustWaveThings/webpack_template_repository/issues"
+	},
+	"browserslist": [
+		"defaults and supports es6-module",
+		"maintained node versions"
+	],
+	"stylelint": {
+		"extends": "stylelint-config-standard"
+	},
+	"homepage": "https://github.com/JustWaveThings/webpack_template_repository#readme",
+	"devDependencies": {
+		"@babel/core": "^7.21.3",
+		"@babel/preset-env": "^7.20.2",
+		"@babel/runtime": "^7.21.0",
+		"airbnb-browser-shims": "^3.3.0",
+		"babel-loader": "^9.1.2",
+		"babel-preset-airbnb": "^5.0.0",
+		"browserslist": "^4.21.5",
+		"eslint": "^8.34.0",
+		"eslint-config-airbnb-base": "^15.0.0",
+		"eslint-config-prettier": "^8.6.0",
+		"eslint-plugin-import": "^2.27.5",
+		"eslint-webpack-plugin": "^4.0.0",
+		"gh-pages": "^5.0.0",
+		"source-map-loader": "^4.0.1",
+		"stylelint": "^15.3.0",
+		"stylelint-config-standard": "^31.0.0",
+		"stylelint-webpack-plugin": "^4.1.0",
+		"webpack": "^5.76.2",
+		"webpack-cli": "^5.0.1",
+		"webpack-dev-server": "^4.11.1"
+	},
+	"dependencies": {
+		"css-loader": "^6.7.3",
+		"date-fns": "^2.29.3",
+		"file-loader": "^6.2.0",
+		"html-webpack-plugin": "^5.5.0",
+		"normalize.css": "^8.0.1",
+		"style-loader": "^3.3.1",
+		"uuid": "^9.0.0"
+	}
+}
