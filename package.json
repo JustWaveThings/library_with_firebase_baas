@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Adding Firebase BaaS to earlier project",
   "main": ".src/index.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
@@ -56,6 +55,7 @@
     "css-loader": "^6.7.3",
     "date-fns": "^2.29.3",
     "file-loader": "^6.2.0",
+    "firebase": "^9.23.0",
     "html-webpack-plugin": "^5.5.0",
     "normalize.css": "^8.0.1",
     "style-loader": "^3.3.1",
