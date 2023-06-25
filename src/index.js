@@ -1,8 +1,40 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable func-names */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-use-before-define */
 import './style.css';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import trashIcon from './img/delete.svg';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyDHbAqh5qZOjfDBB4J4VnbcN6-gwBfdS3I',
+  authDomain: 'library-add-firebase.firebaseapp.com',
+  projectId: 'library-add-firebase',
+  storageBucket: 'library-add-firebase.appspot.com',
+  messagingSenderId: '1044075796113',
+  appId: '1:1044075796113:web:da6200fcfae6fb706d1130',
+};
+
+initializeApp(firebaseConfig);
+
+const db = getFirestore();
+
+const colRef = collection(db, 'myLibrary');
+
+const fireBooks = getDocs(colRef).then(snapshot => {
+  const firebaseBooks = [];
+  snapshot.docs.forEach(doc => {
+    firebaseBooks.push({
+      ...doc.data(),
+      id: doc.id,
+    });
+  });
+  console.log(firebaseBooks);
+  return firebaseBooks;
+});
+
+addFsBook(fireBooks);
 
 const myLibrary = [];
 
@@ -39,6 +71,23 @@ book1.addBookToLibrary();
 book2.addBookToLibrary();
 book3.addBookToLibrary();
 book4.addBookToLibrary();
+
+function addFsBook(obj) {
+  obj
+    .then(res => {
+      res.forEach(item => {
+        const fsBook = new Book(item.formTitle, item.formAuthor, item.formPages, item.formRead);
+        console.log(fsBook);
+        fsBook.addBookToLibrary();
+        emptyBookshelf();
+        drawLibrary();
+        clearForm();
+      });
+    })
+    .catch(err => {
+      console.log(err.message);
+    });
+}
 
 function addBook(event) {
   event.preventDefault();
@@ -92,7 +141,7 @@ function drawLibrary() {
     const titleValue = document.createElement('h5');
     titleValue.classList.add('item-book-title');
     titleValue.id = 'title-cont';
-    titleValue.textContent = myLibrary[i].title;
+    titleValue.textContent = myLibrary[i]?.title;
 
     const authorLabel = document.createElement('h4');
     authorLabel.classList.add('item-desc', 'author');
@@ -101,7 +150,7 @@ function drawLibrary() {
     const authorValue = document.createElement('h5');
     authorValue.classList.add('item-author');
     authorValue.id = 'author-cont';
-    authorValue.textContent = myLibrary[i].author;
+    authorValue.textContent = myLibrary[i]?.author;
 
     const pagesLabel = document.createElement('h4');
     pagesLabel.classList.add('item-desc', 'pages');
@@ -110,7 +159,7 @@ function drawLibrary() {
     const pagesValue = document.createElement('h5');
     pagesValue.classList.add('item-pages');
     pagesValue.id = 'pages-cont';
-    pagesValue.textContent = myLibrary[i].pages;
+    pagesValue.textContent = myLibrary[i]?.pages;
 
     const readLabel = document.createElement('h4');
     readLabel.classList.add('item-desc', 'read-toggle');
@@ -121,11 +170,11 @@ function drawLibrary() {
     readValue.id = 'checkbox';
     readValue.setAttribute('type', 'checkbox');
     readValue.setAttribute('name', 'checkbox');
-    console.log(`On redraw/reload, for book ${i} the read status is: ${myLibrary[i].readStatus}`);
-    if (myLibrary[i].readStatus === 'read') {
+    // console.log(`On redraw/reload, for book ${i} the read status is: ${myLibrary[i]?.readStatus}`);
+    if (myLibrary[i]?.readStatus === 'read') {
       readValue.checked = true;
     }
-    readValue.dataset.indexValue = myLibrary[i].index;
+    readValue.dataset.indexValue = myLibrary[i]?.index;
     readValue.addEventListener('pointerup', event => {
       setReadStatus(event);
     });
@@ -144,10 +193,10 @@ function drawLibrary() {
     deleteIcon.setAttribute('type', 'image');
     deleteIcon.setAttribute('name', 'delete');
     deleteIcon.setAttribute('id', 'delete');
-    deleteIcon.setAttribute('src', { trashIcon });
+    deleteIcon.setAttribute('src', trashIcon);
 
     deleteIcon.classList.add('delete');
-    deleteIcon.dataset.indexValue = myLibrary[i].index;
+    deleteIcon.dataset.indexValue = myLibrary[i]?.index;
     deleteIcon.addEventListener('click', event => {
       deleteBook(event);
     });
