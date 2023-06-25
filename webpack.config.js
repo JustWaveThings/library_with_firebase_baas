@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
-const StylelintPlugin = require('stylelint-webpack-plugin');
+//const StylelintPlugin = require('stylelint-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -15,7 +15,7 @@ module.exports = {
     // .preview.csb.app is the domain for CodeSandbox.io
     static: './dist',
     client: {
-      progress: true,
+      progress: false,
       reconnect: true,
       overlay: {
         warnings: false,
@@ -35,11 +35,11 @@ module.exports = {
       //favicon: path.resolve(__dirname, '../icons/favicon.ico'),
     }),
     new ESLintPlugin(),
-    new StylelintPlugin({
+    /* new StylelintPlugin({
       fix: false,
       failOnError: false,
       failOnWarning: false,
-    }),
+    }), */
   ],
   optimization: {
     runtimeChunk: 'single',
