@@ -4,7 +4,7 @@
 /* eslint-disable no-use-before-define */
 import './style.css';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, where, orderBy, onSnapshot, deleteDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import trashIcon from './img/delete.svg';
 
 const firebaseConfig = {
@@ -20,7 +20,13 @@ initializeApp(firebaseConfig);
 
 const db = getFirestore();
 
+// book collection
+
 const colRef = collection(db, 'myLibrary');
+
+// queries
+
+// const q = query(colRef, orderBy('createdAt'));
 
 const fireBooks = getDocs(colRef).then(snapshot => {
   const firebaseBooks = [];
@@ -35,6 +41,24 @@ const fireBooks = getDocs(colRef).then(snapshot => {
 });
 
 addFsBook(fireBooks);
+
+// firestore add book
+const addBookForm = document.querySelector('#book-add');
+console.log(addBookForm);
+addBookForm.addEventListener('submit', e => {
+  e.preventDefault();
+  addDoc(colRef, {
+    title: addBookForm.title.value,
+    author: addBookForm.author.value,
+    pages: addBookForm.pages.value,
+    readStatus: false,
+    createdAt: serverTimestamp(),
+  }).then(() => {
+    addBookForm.reset();
+  });
+});
+
+// delete book
 
 const myLibrary = [];
 
@@ -62,7 +86,7 @@ Book.prototype.addBookToLibrary = function () {
   myLibrary.push(this);
 };
 
-const book1 = new Book('The Hobbit', 'J.R.R. Tolkien', 450, 'unread');
+/* const book1 = new Book('The Hobbit', 'J.R.R. Tolkien', 450, 'unread');
 const book2 = new Book('Catch-22', 'Joseph Heller', 400, 'unread');
 const book3 = new Book('Heart of Darkness', 'Joseph Conrad', 300, 'unread');
 const book4 = new Book('Botany of Desire', 'Michael Pollan', 250, 'unread');
@@ -70,13 +94,13 @@ const book4 = new Book('Botany of Desire', 'Michael Pollan', 250, 'unread');
 book1.addBookToLibrary();
 book2.addBookToLibrary();
 book3.addBookToLibrary();
-book4.addBookToLibrary();
+book4.addBookToLibrary(); */
 
 function addFsBook(obj) {
   obj
     .then(res => {
       res.forEach(item => {
-        const fsBook = new Book(item.formTitle, item.formAuthor, item.formPages, item.formRead);
+        const fsBook = new Book(item.title, item.author, item.pages, item.readStatus, item.id);
         console.log(fsBook);
         fsBook.addBookToLibrary();
         emptyBookshelf();
@@ -85,18 +109,29 @@ function addFsBook(obj) {
       });
     })
     .catch(err => {
-      console.log(err.message);
+      console.log(err.message, 'from catch block');
     });
 }
 
-function addBook(event) {
+/* const deleteFsBook = document.querySelector('#delete');
+deleteFsBook.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const docRef = doc(db, 'myLibrary', deleteFsBook.id.value);
+
+  deleteDoc(docRef).then(() => {
+    deleteFbBook.reset();
+  });
+}); */
+
+/* function addBook(event) {
   event.preventDefault();
   const sample = new Book(formTitle.value, formAuthor.value, formPages.value, formRead.value);
   sample.addBookToLibrary();
   emptyBookshelf();
   drawLibrary();
   clearForm();
-}
+} */
 
 function clearForm() {
   document.getElementById('book-add').reset();
@@ -120,7 +155,7 @@ function deleteBook(event) {
 function setReadStatus(event) {
   const bookToChange = event.currentTarget.dataset.indexValue;
   const foundIndex = myLibrary.findIndex(x => x.index === bookToChange);
-  myLibrary[foundIndex].readStatus === 'unread' ? (myLibrary[foundIndex].readStatus = 'read') : (myLibrary[foundIndex].readStatus = 'unread');
+  myLibrary[foundIndex].readStatus === false ? (myLibrary[foundIndex].readStatus = true) : (myLibrary[foundIndex].readStatus = false);
 }
 
 function drawLibrary() {
@@ -171,9 +206,9 @@ function drawLibrary() {
     readValue.setAttribute('type', 'checkbox');
     readValue.setAttribute('name', 'checkbox');
     // console.log(`On redraw/reload, for book ${i} the read status is: ${myLibrary[i]?.readStatus}`);
-    if (myLibrary[i]?.readStatus === 'read') {
-      readValue.checked = true;
-    }
+    myLibrary[i]?.readStatus === true && (readValue.checked = true);
+    // console.log(myLibrary[i].readStatus, 'readStatus on 197');
+
     readValue.dataset.indexValue = myLibrary[i]?.index;
     readValue.addEventListener('pointerup', event => {
       setReadStatus(event);
@@ -214,13 +249,13 @@ function drawLibrary() {
   }
 }
 
-const formTitle = document.getElementById('title');
+/* const formTitle = document.getElementById('title');
 const formAuthor = document.getElementById('author');
 const formPages = document.getElementById('pages');
 const formRead = document.getElementById('readStatus');
 const formButton = document.querySelector('#btn');
 formButton.addEventListener('click', event => {
   addBook(event);
-});
+}); */
 
 drawLibrary();
