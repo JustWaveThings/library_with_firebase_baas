@@ -1,8 +1,12 @@
+/* eslint-disable func-names */
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-use-before-define */
 import './style.css';
+import trashIcon from './img/delete.svg';
 
-let myLibrary = [];
+const myLibrary = [];
 
-let Book = class {
+const Book = class {
   constructor(title, author, pages, readStatus) {
     this.title = title;
     this.author = author;
@@ -13,9 +17,9 @@ let Book = class {
 
 Book.prototype.bookIndex = function (length = 5) {
   this.index = '';
-  let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i += 1) {
     this.index += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return this.index;
@@ -74,7 +78,7 @@ function drawLibrary() {
   let i = 0;
   do {
     displayBooksInArray(myLibrary[i]);
-    i++;
+    i += 1;
   } while (i <= myLibrary.length - 1);
 
   function displayBooksInArray() {
@@ -140,7 +144,7 @@ function drawLibrary() {
     deleteIcon.setAttribute('type', 'image');
     deleteIcon.setAttribute('name', 'delete');
     deleteIcon.setAttribute('id', 'delete');
-    deleteIcon.setAttribute('src', 'img/delete.svg');
+    deleteIcon.setAttribute('src', { trashIcon });
 
     deleteIcon.classList.add('delete');
     deleteIcon.dataset.indexValue = myLibrary[i].index;
