@@ -30,10 +30,10 @@ const colRef = collection(db, 'myLibrary');
 
 const fireBooks = getDocs(colRef).then(snapshot => {
   const firebaseBooks = [];
-  snapshot.docs.forEach(doc => {
+  snapshot.docs.forEach(docs => {
     firebaseBooks.push({
-      ...doc.data(),
-      id: doc.id,
+      ...docs.data(),
+      id: docs.id,
     });
   });
   console.log(firebaseBooks);
