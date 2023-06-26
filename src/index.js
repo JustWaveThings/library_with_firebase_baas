@@ -4,7 +4,7 @@
 /* eslint-disable no-use-before-define */
 import './style.css';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, doc, query, where, orderBy, onSnapshot, deleteDoc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, query, where, orderBy, onSnapshot, deleteDoc, addDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import trashIcon from './img/delete.svg';
 
 const firebaseConfig = {
@@ -82,7 +82,6 @@ function addFsBook(obj) {
         fsBook.addBookToLibrary();
         emptyBookshelf();
         drawLibrary();
-        clearForm();
       });
     })
     .catch(err => {
@@ -95,20 +94,31 @@ function deleteFsBookWrapper() {
 
   deleteFsBooks.forEach(deleteFsBook => {
     deleteFsBook.addEventListener('click', () => {
-      console.log(deleteFsBook.dataset.id);
+      // console.log(deleteFsBook.dataset.id);
       const docRef = doc(db, 'myLibrary', deleteFsBook.dataset.id);
 
       deleteDoc(docRef).then(() => {
         emptyBookshelf();
         drawLibrary();
-        clearForm();
       });
     });
   });
 }
 
-function clearForm() {
-  document.getElementById('book-add').reset();
+// update book record (read /unread only in this example)
+
+function updateFsReadStatusWrapper() {
+  const readCheckListeners = document.querySelectorAll('#checkbox');
+
+  readCheckListeners.forEach(readStatus => {
+    readStatus.addEventListener('change', e => {
+      const docRef = doc(db, 'myLibrary', e.target.dataset.id);
+
+      updateDoc(docRef, {
+        readStatus: e.target.checked,
+      });
+    });
+  });
 }
 
 const container = document.querySelector('#proj-cont');
@@ -118,11 +128,11 @@ function emptyBookshelf(parent = container) {
   }
 }
 
-function setReadStatus(event) {
+/* function setReadStatus(event) {
   const bookToChange = event.currentTarget.dataset.indexValue;
   const foundIndex = myLibrary.findIndex(x => x.index === bookToChange);
   myLibrary[foundIndex].readStatus === false ? (myLibrary[foundIndex].readStatus = true) : (myLibrary[foundIndex].readStatus = false);
-}
+} */
 
 function drawLibrary() {
   let i = 0;
@@ -171,13 +181,11 @@ function drawLibrary() {
     readValue.id = 'checkbox';
     readValue.setAttribute('type', 'checkbox');
     readValue.setAttribute('name', 'checkbox');
-    // console.log(`On redraw/reload, for book ${i} the read status is: ${myLibrary[i]?.readStatus}`);
     myLibrary[i]?.readStatus === true && (readValue.checked = true);
-    // console.log(myLibrary[i].readStatus, 'readStatus on 197');
 
-    readValue.dataset.indexValue = myLibrary[i]?.index;
+    readValue.dataset.id = myLibrary[i]?.id;
     readValue.addEventListener('pointerup', event => {
-      setReadStatus(event);
+      // setReadStatus(event);
     });
 
     const deleteIcon = document.createElement('input');
@@ -200,16 +208,8 @@ function drawLibrary() {
     bookContainer.appendChild(readValue);
     bookContainer.appendChild(deleteIcon);
     deleteFsBookWrapper();
+    updateFsReadStatusWrapper();
   }
 }
-
-/* const formTitle = document.getElementById('title');
-const formAuthor = document.getElementById('author');
-const formPages = document.getElementById('pages');
-const formRead = document.getElementById('readStatus');
-const formButton = document.querySelector('#btn');
-formButton.addEventListener('click', event => {
-  addBook(event);
-}); */
 
 drawLibrary();
