@@ -4,7 +4,7 @@
 /* eslint-disable no-use-before-define */
 import './style.css';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, query, where, orderBy, onSnapshot, deleteDoc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, query, where, orderBy, onSnapshot, deleteDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import trashIcon from './img/delete.svg';
 
 const firebaseConfig = {
@@ -44,7 +44,6 @@ addFsBook(fireBooks);
 
 // firestore add book
 const addBookForm = document.querySelector('#book-add');
-console.log(addBookForm);
 addBookForm.addEventListener('submit', e => {
   e.preventDefault();
   addDoc(colRef, {
@@ -58,20 +57,19 @@ addBookForm.addEventListener('submit', e => {
   });
 });
 
-// delete book
-
 const myLibrary = [];
 
 const Book = class {
-  constructor(title, author, pages, readStatus) {
+  constructor(title, author, pages, readStatus, id) {
     this.title = title;
     this.author = author;
     this.pages = pages;
     this.readStatus = readStatus;
+    this.id = id;
   }
 };
 
-Book.prototype.bookIndex = function (length = 5) {
+/* Book.prototype.bookIndex = function (length = 5) {
   this.index = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   const charactersLength = characters.length;
@@ -84,17 +82,11 @@ Book.prototype.bookIndex = function (length = 5) {
 Book.prototype.addBookToLibrary = function () {
   this.bookIndex();
   myLibrary.push(this);
+}; */
+
+Book.prototype.addBookToLibrary = function () {
+  myLibrary.push(this);
 };
-
-/* const book1 = new Book('The Hobbit', 'J.R.R. Tolkien', 450, 'unread');
-const book2 = new Book('Catch-22', 'Joseph Heller', 400, 'unread');
-const book3 = new Book('Heart of Darkness', 'Joseph Conrad', 300, 'unread');
-const book4 = new Book('Botany of Desire', 'Michael Pollan', 250, 'unread');
-
-book1.addBookToLibrary();
-book2.addBookToLibrary();
-book3.addBookToLibrary();
-book4.addBookToLibrary(); */
 
 function addFsBook(obj) {
   obj
@@ -113,16 +105,22 @@ function addFsBook(obj) {
     });
 }
 
-/* const deleteFsBook = document.querySelector('#delete');
-deleteFsBook.addEventListener('submit', e => {
-  e.preventDefault();
+function deleteFsBookWrapper() {
+  const deleteFsBooks = document.querySelectorAll('#delete');
 
-  const docRef = doc(db, 'myLibrary', deleteFsBook.id.value);
+  deleteFsBooks.forEach(deleteFsBook => {
+    deleteFsBook.addEventListener('click', () => {
+      console.log(deleteFsBook.dataset.id);
+      const docRef = doc(db, 'myLibrary', deleteFsBook.dataset.id);
 
-  deleteDoc(docRef).then(() => {
-    deleteFbBook.reset();
+      deleteDoc(docRef).then(() => {
+        emptyBookshelf();
+        drawLibrary();
+        clearForm();
+      });
+    });
   });
-}); */
+}
 
 /* function addBook(event) {
   event.preventDefault();
@@ -144,13 +142,13 @@ function emptyBookshelf(parent = container) {
   }
 }
 
-function deleteBook(event) {
+/* function deleteBook(event) {
   const bookToBeDeletedIndex = event.currentTarget.dataset.indexValue;
   const foundIndex = myLibrary.findIndex(x => x.index === bookToBeDeletedIndex);
   myLibrary.splice(foundIndex, 1);
   emptyBookshelf();
   drawLibrary();
-}
+} */
 
 function setReadStatus(event) {
   const bookToChange = event.currentTarget.dataset.indexValue;
@@ -231,10 +229,10 @@ function drawLibrary() {
     deleteIcon.setAttribute('src', trashIcon);
 
     deleteIcon.classList.add('delete');
-    deleteIcon.dataset.indexValue = myLibrary[i]?.index;
-    deleteIcon.addEventListener('click', event => {
+    deleteIcon.dataset.id = myLibrary[i]?.id;
+    /* deleteIcon.addEventListener('click', event => {
       deleteBook(event);
-    });
+    }); */
 
     container.appendChild(bookContainer);
     bookContainer.appendChild(titleLabel);
@@ -246,6 +244,7 @@ function drawLibrary() {
     bookContainer.appendChild(readLabel);
     bookContainer.appendChild(readValue);
     bookContainer.appendChild(deleteIcon);
+    deleteFsBookWrapper();
   }
 }
 
