@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library</title>
+<script defer src="runtime.bundle.js"></script><script defer src="index.bundle.js"></script></head>
+
+<body>
+
+
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Your Favorite Reads</h1>
+        </div>
+        <div class="sidebar">
+            <div class="library-logo"></div>
+            <div class="dashboard">
+
+                <section class="book-form">
+                    <div class="form-container">
+                        <form id="book-add">
+                            <fieldset>
+                                <legend><h2>Add New Book</h2></legend>
+                                <div class="form-control">
+                                    <label for="title">Title </label>
+                                    <input id="title" name="title" type="text">
+                                </div>
+                                <div class="form-control">
+                                    <label for="author">Author </label>
+                                    <input type="text" name="author" id="author">
+                                </div>
+                                <div class="form-control">
+                                    <label for="pages">Pages </label>
+                                    <input type="number" name="pages" id="pages" type="number">
+                                </div>
+                                <!-- <input type="hidden" name="readStatus" id="readStatus" value="unread"> -->
+                                <input type="hidden" name="bookId" id="bookId" data-index-number="4">
+                                <button id="btn" type="submit">Add Book </button>
+                            </fieldset>
+                        </form>
+                </section>
+
+            </div>
+
+
+
+        </div>
+        <div class="main">
+            <div class="section-title">
+                <h3 class="section">In Your Collection:</h3>
+            </div>
+            <ul class="proj-cont" id="proj-cont">
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
