@@ -20,15 +20,20 @@ initializeApp(firebaseConfig);
 
 const db = getFirestore();
 
+let myLibrary = [];
+
 // book collection
 
 const colRef = collection(db, 'myLibrary');
 
 // queries
 
-// const q = query(colRef, orderBy('createdAt'));
+const queryAllAscending = query(colRef, orderBy('createdAt'));
 
-const fireBooks = getDocs(colRef).then(snapshot => {
+// real time collection subscription
+
+onSnapshot(queryAllAscending, snapshot => {
+  emptyBookshelf();
   const firebaseBooks = [];
   snapshot.docs.forEach(docs => {
     firebaseBooks.push({
@@ -36,11 +41,13 @@ const fireBooks = getDocs(colRef).then(snapshot => {
       id: docs.id,
     });
   });
-  console.log(firebaseBooks);
-  return firebaseBooks;
-});
 
-addFsBook(fireBooks);
+  myLibrary = [];
+  firebaseBooks.forEach(item => {
+    new Book(item.title, item.author, item.pages, item.readStatus, item.id).addBookToLibrary();
+  });
+  drawLibrary();
+});
 
 // firestore add book
 const addBookForm = document.querySelector('#book-add');
@@ -52,12 +59,14 @@ addBookForm.addEventListener('submit', e => {
     pages: addBookForm.pages.value,
     readStatus: false,
     createdAt: serverTimestamp(),
-  }).then(() => {
-    addBookForm.reset();
-  });
+  })
+    .then(() => {
+      addBookForm.reset();
+    })
+    .catch(err => {
+      console.log(err.message);
+    });
 });
-
-const myLibrary = [];
 
 const Book = class {
   constructor(title, author, pages, readStatus, id) {
@@ -73,34 +82,14 @@ Book.prototype.addBookToLibrary = function () {
   myLibrary.push(this);
 };
 
-function addFsBook(obj) {
-  obj
-    .then(res => {
-      res.forEach(item => {
-        const fsBook = new Book(item.title, item.author, item.pages, item.readStatus, item.id);
-        console.log(fsBook);
-        fsBook.addBookToLibrary();
-        emptyBookshelf();
-        drawLibrary();
-      });
-    })
-    .catch(err => {
-      console.log(err.message, 'from catch block');
-    });
-}
-
 function deleteFsBookWrapper() {
   const deleteFsBooks = document.querySelectorAll('#delete');
 
   deleteFsBooks.forEach(deleteFsBook => {
     deleteFsBook.addEventListener('click', () => {
-      // console.log(deleteFsBook.dataset.id);
       const docRef = doc(db, 'myLibrary', deleteFsBook.dataset.id);
 
-      deleteDoc(docRef).then(() => {
-        emptyBookshelf();
-        drawLibrary();
-      });
+      deleteDoc(docRef);
     });
   });
 }
@@ -122,17 +111,12 @@ function updateFsReadStatusWrapper() {
 }
 
 const container = document.querySelector('#proj-cont');
+
 function emptyBookshelf(parent = container) {
   while (parent.firstChild) {
     parent.removeChild(parent.firstChild);
   }
 }
-
-/* function setReadStatus(event) {
-  const bookToChange = event.currentTarget.dataset.indexValue;
-  const foundIndex = myLibrary.findIndex(x => x.index === bookToChange);
-  myLibrary[foundIndex].readStatus === false ? (myLibrary[foundIndex].readStatus = true) : (myLibrary[foundIndex].readStatus = false);
-} */
 
 function drawLibrary() {
   let i = 0;
@@ -184,9 +168,6 @@ function drawLibrary() {
     myLibrary[i]?.readStatus === true && (readValue.checked = true);
 
     readValue.dataset.id = myLibrary[i]?.id;
-    readValue.addEventListener('pointerup', event => {
-      // setReadStatus(event);
-    });
 
     const deleteIcon = document.createElement('input');
     deleteIcon.setAttribute('type', 'image');
@@ -211,5 +192,3 @@ function drawLibrary() {
     updateFsReadStatusWrapper();
   }
 }
-
-drawLibrary();
