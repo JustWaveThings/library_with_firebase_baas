@@ -69,21 +69,6 @@ const Book = class {
   }
 };
 
-/* Book.prototype.bookIndex = function (length = 5) {
-  this.index = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i += 1) {
-    this.index += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return this.index;
-};
-
-Book.prototype.addBookToLibrary = function () {
-  this.bookIndex();
-  myLibrary.push(this);
-}; */
-
 Book.prototype.addBookToLibrary = function () {
   myLibrary.push(this);
 };
@@ -122,15 +107,6 @@ function deleteFsBookWrapper() {
   });
 }
 
-/* function addBook(event) {
-  event.preventDefault();
-  const sample = new Book(formTitle.value, formAuthor.value, formPages.value, formRead.value);
-  sample.addBookToLibrary();
-  emptyBookshelf();
-  drawLibrary();
-  clearForm();
-} */
-
 function clearForm() {
   document.getElementById('book-add').reset();
 }
@@ -141,14 +117,6 @@ function emptyBookshelf(parent = container) {
     parent.removeChild(parent.firstChild);
   }
 }
-
-/* function deleteBook(event) {
-  const bookToBeDeletedIndex = event.currentTarget.dataset.indexValue;
-  const foundIndex = myLibrary.findIndex(x => x.index === bookToBeDeletedIndex);
-  myLibrary.splice(foundIndex, 1);
-  emptyBookshelf();
-  drawLibrary();
-} */
 
 function setReadStatus(event) {
   const bookToChange = event.currentTarget.dataset.indexValue;
@@ -212,16 +180,6 @@ function drawLibrary() {
       setReadStatus(event);
     });
 
-    /* 		function setReadStatus(event) {
-		const bookToChange = event.currentTarget.dataset.indexValue;
-		const foundIndex = myLibrary.findIndex(
-			(x) => x.index === bookToChange
-		);
-		myLibrary[foundIndex].readStatus === 'unread'
-			? (myLibrary[foundIndex].readStatus = 'read')
-			: (myLibrary[foundIndex].readStatus = 'unread');
-	}; */
-
     const deleteIcon = document.createElement('input');
     deleteIcon.setAttribute('type', 'image');
     deleteIcon.setAttribute('name', 'delete');
@@ -230,9 +188,6 @@ function drawLibrary() {
 
     deleteIcon.classList.add('delete');
     deleteIcon.dataset.id = myLibrary[i]?.id;
-    /* deleteIcon.addEventListener('click', event => {
-      deleteBook(event);
-    }); */
 
     container.appendChild(bookContainer);
     bookContainer.appendChild(titleLabel);
